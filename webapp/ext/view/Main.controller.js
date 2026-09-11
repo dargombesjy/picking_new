@@ -1,8 +1,9 @@
 sap.ui.define(
     [
-        'sap/fe/core/PageController'
+        'sap/fe/core/PageController',
+        'sap/m/MessageBox',
     ],
-    function(PageController) {
+    function (PageController, MessageBox) {
         'use strict';
 
         return PageController.extend('zwmpickingn.ext.view.Main', {
@@ -11,9 +12,9 @@ sap.ui.define(
              * Can be used to modify the View before it is displayed, to bind event handlers and do other one-time initialization.
              * @memberOf zwmpickingn.ext.view.Main
              */
-            //  onInit: function () {
-            //      PageController.prototype.onInit.apply(this, arguments); // needs to be called to properly initialize the page controller
-            //  },
+            onInit: function () {
+                PageController.prototype.onInit.apply(this, arguments); // needs to be called to properly initialize the page controller
+            },
 
             /**
              * Similar to onAfterRendering, but this hook is invoked before the controller's View is re-rendered
@@ -40,6 +41,171 @@ sap.ui.define(
             //  onExit: function() {
             //
             //  }
+
+            // onSave: function () {
+            //     var oTable = this.getView().byId("Table1");
+            //     var aContexts = oTable.getSelectedContexts();
+            //     this.editFlow.saveDocument(aContexts);
+            // },
+
+            // onDiscard: function () {
+            //     var oTable = this.getView().byId("Table1");
+            //     var aContexts = oTable.getSelectedContexts();
+            //     this.editFlow.discardDocument(aContexts);
+            // },
+
+            toggleMode: function () {
+                var oUiModel = this.getModel('ui');
+                var bIsEditable = oUiModel.getProperty('/isEditable');
+                var oFilterBar = this.getView().byId("FilterBar");
+
+                oUiModel.setProperty('/isEditable', !bIsEditable);
+                if (!bIsEditable) {
+                    oFilterBar.setFilterValues("Status", "EQ", "N")
+                        .then(function () {
+                            return oFilterBar.triggerSearch();
+                        });
+                }
+            },
+
+            onBarcodeEnter: function () {
+                const sBarcode = this.getView().getModel("barcodeForm").getProperty("/barcodeId");
+                if (sBarcode) {
+                    if (!this._validateEntryForm()) {
+                        return;
+                    }
+                    this.onAddRow();
+                }
+            },
+
+            onBarcodeScanSuccess: function (oEvent) {
+                const sBarcode = oEvent.getParameter("text");
+                if (sBarcode) {
+                    this.getView().getModel("barcodeForm").setProperty("/barcodeId", sBarcode);
+                    this.onAddRow();
+                }
+            },
+
+            onAddRow: function () {
+                const oView = this.getView();
+                const oEntryModel = oView.getModel("barcodeForm");
+                const oEntryData = oEntryModel.getData();
+
+                const oTable = oView.byId("Table1");
+                const oListBinding = oTable.getRowBinding();
+                // const iCountBefore = oListBinding.getContexts().length;
+                const oNewData = {
+                    Barcode: oEntryData.barcodeId,
+                    Warehouse: oEntryData.warehouse,
+                    HuNum: oEntryData.handlingUnit,
+                    Delivery: oEntryData.delivery,
+                    DelvItem: oEntryData.deliveryItem,
+                    NewHu: oEntryData.newHU === true ? "X" : ""
+                };
+
+                const oNewContext = oListBinding.create(oNewData);
+
+                oNewContext.created().then(function () {
+                    this._resetEntryForm("partial");
+                    var oUiModel = this.getModel('ui');
+                    oUiModel.setProperty('/inProcess', true);
+
+                    // this._focusNewRow(oTable, oNewContext);
+                }.bind(this)).catch(function (oError) {
+                    console.error("Error creating document", oError);
+                });
+
+                // var bNewHU = oEntryData.newHU === true ? "X" : "";
+                // this.editFlow.createDocument(oListBinding, {
+                //     creationMode: "Inline",
+                //     data: {
+                //         Barcode: oEntryData.barcodeId,
+                //         HuNum: oEntryData.handlingUnit,
+                //         Delivery: oEntryData.deliveryNumber,
+                //         DelvItem: oEntryData.deliveryItem,
+                //         NewHu: bNewHU
+                //     }
+                // }).then(function (oNewContext) {
+                //     const oContextToFocus = oNewContext || this._findNewlyAddedContext(oListBinding, iCountBefore);
+                //     if (oContextToFocus) {
+                //         this._focusNewRow(oTable, oContextToFocus);
+                //     }
+                // }.bind(this)).catch(function (oError) {
+                //     console.error("Error creating document", oError);
+                // });
+            },
+
+            onGenWHTask: function () {
+                var oTable = this.getView().byId("Table1");
+                var aContexts = oTable.getSelectedContexts();
+                if (!aContexts.length) {
+                    MessageToast.show("Select a row first");
+                    return;
+                }
+
+                this.editFlow.invokeAction("com.sap.gateway.srvd.zlut_wm_picking_n.v0001.generate_hu", {
+                    contexts: aContexts,
+                    parameterValues: {
+                        "Action": "GenWHTask"
+                    },
+                    skipParameterDialog: true
+                });
+
+                this._resetEntryForm("partial");
+                var oUiModel = this.getModel('ui');
+                oUiModel.setProperty('/inProcess', true);
+            },
+
+            _validateEntryForm: function () {
+                const oView = this.getView();
+                const oFormModel = oView.getModel("barcodeForm");
+                const sDelivery = oFormModel.getProperty("/delivery");
+                const sDelivItem = oFormModel.getProperty("/deliveryItem");
+                if (!sDelivery || !sDelivItem || sDelivery.trim() === "" || sDelivItem.trim() === "") {
+                    MessageBox.warning("Please enter both Delivery Number and Delivery Item.");
+                    return false;
+                }
+                // Add more validation logic as needed
+                const sBarcode = oFormModel.getProperty("/barcodeId");
+                const oTable = oView.byId("Table1");
+                const aContexts = oTable.getRowBinding().getContexts();
+                const bDuplicate = aContexts.some(function (oContext) {
+                    return oContext.getProperty("Barcode") === sBarcode;
+                });
+                if (bDuplicate) {
+                    MessageBox.warning("This barcode has already been added.");
+                    return false;
+                }
+                return true;
+            },
+
+            _resetEntryForm: function (sParam) {
+                const oView = this.getView();
+                const oFormModel = oView.getModel("barcodeForm");
+
+                oFormModel.setProperty("/barcodeId", "");
+
+
+                if (sParam === "partial") {
+                    oFormModel.setProperty("/barcodeId", "");
+                } else if (sParam === "full") {
+                    oFormModel.setData({
+                        barcodeId: "",
+                        warehouse: "",
+                        deliveryNumber: "",
+                        deliveryItem: "",
+                        handlingUnit: "",
+                        newHU: false,
+                    });
+                }
+            },
+
+            _findNewlyAddedContext: function (oListBinding, iCountBefore) {
+                const aContexts = oListBinding.getContexts();
+                // transient/new contexts are typically appended; adjust index (0 or last) based on createAtEnd
+                return aContexts.length > iCountBefore ? aContexts[aContexts.length - 1] : null;
+            },
+
         });
     }
 );

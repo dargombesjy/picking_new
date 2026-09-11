@@ -62,16 +62,34 @@
                     <PropertyRef Name="LogUuid"/>
                 </Key>
                 <Property Name="LogUuid" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="Warehouse" Type="Edm.String" Nullable="false" MaxLength="4"/>
+                <Property Name="Delivery" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="DelvItem" Type="Edm.String" Nullable="false" MaxLength="6"/>
+                <Property Name="HuNum" Type="Edm.String" Nullable="false" MaxLength="20"/>
+                <Property Name="NewHu" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="18"/>
+                <Property Name="Barcode" Type="Edm.String" Nullable="false" MaxLength="70"/>
                 <Property Name="ParentHandlingUnitUUID" Type="Edm.Guid"/>
                 <Property Name="StockItemUUID" Type="Edm.Guid"/>
-                <Property Name="Barcode" Type="Edm.String" Nullable="false" MaxLength="20"/>
                 <Property Name="EWMStockQuantityBaseUnit" Type="Edm.String" Nullable="false" MaxLength="3"/>
                 <Property Name="EWMStockQuantityInBaseUnit" Type="Edm.Decimal" Nullable="false" Precision="31" Scale="14"/>
                 <Property Name="EWMStorageType" Type="Edm.String" Nullable="false" MaxLength="4"/>
                 <Property Name="EWMStorageBin" Type="Edm.String" Nullable="false" MaxLength="18"/>
+                <Property Name="Status" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="WhTask" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="Message" Type="Edm.String" Nullable="false"/>
+                <Property Name="LocalCreatedBy" Type="Edm.String" Nullable="false" MaxLength="12"/>
+                <Property Name="LocalCreatedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LocalLastChangedBy" Type="Edm.String" Nullable="false" MaxLength="12"/>
+                <Property Name="LocalLastChangedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedAt" Type="Edm.DateTimeOffset" Precision="7"/>
                 <Property Name="__EntityControl" Type="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.EntityControl"/>
+                <Property Name="__OperationControl" Type="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NOperationControl"/>
                 <Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.zlut_wm_picking_n.v0001.SAP__Message)" Nullable="false"/>
             </EntityType>
+            <ComplexType Name="ZLUT_WM_C_PICKING_NOperationControl">
+                <Property Name="generate_hu" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
             <ComplexType Name="EntityControl">
                 <Property Name="Deletable" Type="Edm.Boolean" Nullable="false"/>
                 <Property Name="Updatable" Type="Edm.Boolean" Nullable="false"/>
@@ -85,6 +103,9 @@
                 <Property Name="numericSeverity" Type="Edm.Byte" Nullable="false"/>
                 <Property Name="longtextUrl" Type="Edm.String"/>
             </ComplexType>
+            <Action Name="generate_hu" IsBound="true">
+                <Parameter Name="_it" Type="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType" Nullable="false"/>
+            </Action>
             <EntityContainer Name="Container">
                 <EntitySet Name="ZLUT_WM_C_PICKING_N" EntityType="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType"/>
             </EntityContainer>
@@ -92,6 +113,28 @@
                 <Annotation Term="SAP__core.ComputedDefaultValue"/>
                 <Annotation Term="SAP__common.Label" String="UUID"/>
                 <Annotation Term="SAP__common.QuickInfo" String="16 Byte UUID in 16 Bytes (Raw Format)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/Delivery">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zlut_i_deliveryvh/0001;ps='srvd-zlut_wm_picking_n-0001';va='com.sap.gateway.srvd.zlut_wm_picking_n.v0001.et-zlut_wm_c_picking_n.delivery'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="Delivery"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=VBELN_VL"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/DelvItem">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String="Item"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Delivery Item"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=POSNR_VL"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/Material">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Material"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Material Number"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=MATNR"/>
             </Annotations>
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/EWMStockQuantityBaseUnit">
                 <Annotation Term="SAP__common.IsUnit"/>
@@ -102,10 +145,38 @@
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/EWMStockQuantityInBaseUnit">
                 <Annotation Term="SAP__measures.Unit" Path="EWMStockQuantityBaseUnit"/>
             </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/LocalCreatedBy">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Created By"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Created By User"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ABP_CREATION_USER"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/LocalLastChangedBy">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Changed By"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Local Instance Last Changed By User"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ABP_LOCINST_LASTCHANGE_USER"/>
+            </Annotations>
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/__EntityControl">
                 <Annotation Term="SAP__core.Computed"/>
                 <Annotation Term="SAP__UI.HiddenFilter"/>
                 <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/__OperationControl">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.generate_hu(SAP__self.ZLUT_WM_C_PICKING_NType)">
+                <Annotation Term="SAP__core.OperationAvailable" Path="_it/__OperationControl/generate_hu"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/Status">
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/zlut_i_pickingstatusvh/0001;ps='srvd-zlut_wm_picking_n-0001';va='com.sap.gateway.srvd.zlut_wm_picking_n.v0001.et-zlut_wm_c_picking_n.status'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.ValueListWithFixedValues"/>
             </Annotations>
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType">
                 <Annotation Term="SAP__common.Label" String="Consumption view WM Picking new"/>
@@ -119,9 +190,19 @@
                 </Annotation>
                 <Annotation Term="SAP__capabilities.FilterRestrictions">
                     <Record>
+                        <PropertyValue Property="Filterable" Bool="true"/>
+                        <PropertyValue Property="FilterExpressionRestrictions">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="Property" PropertyPath="Message"/>
+                                    <PropertyValue Property="AllowedExpressions" String="SearchExpression"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
                         <PropertyValue Property="NonFilterableProperties">
                             <Collection>
                                 <PropertyPath>__EntityControl</PropertyPath>
+                                <PropertyPath>__OperationControl</PropertyPath>
                             </Collection>
                         </PropertyValue>
                     </Record>
@@ -130,7 +211,9 @@
                     <Record>
                         <PropertyValue Property="NonSortableProperties">
                             <Collection>
+                                <PropertyPath>Message</PropertyPath>
                                 <PropertyPath>__EntityControl</PropertyPath>
+                                <PropertyPath>__OperationControl</PropertyPath>
                             </Collection>
                         </PropertyValue>
                     </Record>
@@ -229,6 +312,10 @@
                 <Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
                 <Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
             </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/Barcode">
+                <Annotation Term="SAP__common.Label" String="Characteristic Value"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ATWRT"/>
+            </Annotations>
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/ParentHandlingUnitUUID">
                 <Annotation Term="SAP__common.Label" String="UUID"/>
                 <Annotation Term="SAP__common.QuickInfo" String="16 Byte UUID in 16 Bytes (Raw Format)"/>
@@ -236,6 +323,26 @@
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/StockItemUUID">
                 <Annotation Term="SAP__common.Label" String="UUID"/>
                 <Annotation Term="SAP__common.QuickInfo" String="16 Byte UUID in 16 Bytes (Raw Format)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/LocalCreatedAt">
+                <Annotation Term="SAP__common.Label" String="Created On"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Creation Date Time"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ABP_CREATION_TSTMPL"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/LocalLastChangedAt">
+                <Annotation Term="SAP__common.Label" String="Changed On"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Local Instance Last Change Date Time"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ABP_LOCINST_LASTCHANGE_TSTMPL"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/LastChangedAt">
+                <Annotation Term="SAP__common.Label" String="Changed On"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Last Change Date Time"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ABP_LASTCHANGE_TSTMPL"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NOperationControl/generate_hu">
+                <Annotation Term="SAP__common.Label" String="Dyn. Action Control"/>
+                <Annotation Term="SAP__common.Heading" String="Dynamic Action Control"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Dynamic Action Property"/>
             </Annotations>
             <Annotations Target="SAP__self.EntityControl/Deletable">
                 <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>

@@ -5,14 +5,69 @@
     <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
         <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
     </edmx:Reference>
-    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Communication.xml">
-        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
-    </edmx:Reference>
     <edmx:Reference Uri="/sap/opu/odata4/sap/zlut_wm_picking_n/srvd/sap/zlut_wm_picking_n/0001/$metadata">
         <edmx:Include Namespace="com.sap.gateway.srvd.zlut_wm_picking_n.v0001" Alias="SAP__self"/>
     </edmx:Reference>
     <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="local">
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType">
+                <Annotation Term="UI.SelectionFields" Qualifier="filterBarMacro">
+                    <Collection>
+                        <PropertyPath>Status</PropertyPath>
+                        <PropertyPath>Delivery</PropertyPath>
+                        <PropertyPath>DelvItem</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem" Qualifier="tableMacro">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Barcode"/>
+                            <PropertyValue Property="Label" String="Barcode"/>
+                            <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Delivery"/>
+                            <PropertyValue Property="Label" String="Delivery"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="DelvItem"/>
+                            <PropertyValue Property="Label" String="Delv. Item"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="HuNum"/>
+                            <PropertyValue Property="Label" String="Handling Unit"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Warehouse"/>
+                            <PropertyValue Property="Label" String="Warehouse"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Material" />
+                            <PropertyValue Property="Label" String="Material"/>
+                        </Record >
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="NewHu"/>
+                            <PropertyValue Property="Label" String="New HU"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Status"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Message"/>
+                            <PropertyValue Property="Label" String="Message"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/Status">
+                <Annotation Term="Common.Label" String="Status"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/Delivery">
+                <Annotation Term="Common.Label" String="Delivery"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/DelvItem">
+                <Annotation Term="Common.Label" String="Delivery Item"/>
+            </Annotations>
         </Schema>
     </edmx:DataServices>
 </edmx:Edmx>

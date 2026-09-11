@@ -1,48 +1,78 @@
-<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros" xmlns:html="http://www.w3.org/1999/xhtml" controllerName="zwmpickingn.ext.view.Main">
+<mvc:View xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ndc="sap.ndc" controllerName="zwmpickingn.ext.view.Main" xmlns:macrosTable="sap.fe.macros.table" xmlns:f="sap.ui.layout.form">
     <macros:Page id="Page" title="WM Picking" showFooter="true">
-        <!--This is a sample template, event handlers should be added for implementation-->
-        <macros:breadcrumbs>
-            <!-- Breadcrumbs aggregation -->
-            <Breadcrumbs id="breadcrumbs_breadcrumbs">
-                <Link id="breadcrumbs_link" text="Home" press=".onBreadcrumbsPressHome"/>
-                <Link id="breadcrumbs_link1" text="Page 1" press=".onBreadcrumbsPressPage1"/>
-                <Link id="breadcrumbs_link2" text="Page 2" press=".onBreadcrumbsPressPage2"/>
-            </Breadcrumbs>
-        </macros:breadcrumbs>
-        <macros:navigationActions>
-            <!-- Navigation actions aggregation -->
-            <Button id="navigationActions_button" icon="sap-icon://full-screen" press=".onNavigationActionsFullScreen1" type="Transparent"/>
-        </macros:navigationActions>
-        <macros:titleContent>
-            <!-- Title content aggregation (content next to title) -->
-            <GenericTag id="titleContent_genericTag" text="Status 1" design="StatusIconHidden" status="Information"/>
-        </macros:titleContent>
-        <macros:actions>
-            <!-- Actions aggregation -->
-            <Button id="actions_button" text="Action 1" press=".onActionsClickAction1" type="Ghost"/>
-            <Button id="actions_button1" text="Action 2" press=".onActionsClickAction2" type="Ghost"/>
-        </macros:actions>
-        <macros:headerContent>
-            <!-- Header content aggregation (content after avatar) -->
-            <VBox id="headerContent_vbox">
-                <Title id="headerContent_title" text="Page Title 1"/>
-            </VBox>
-        </macros:headerContent>
+        <Panel id="Panel1" expandable="true" expanded="{ui>/isEditable}" class="custTinyMarginBottom">
+            <headerToolbar>
+                <Toolbar id="Panel1Toolbar">
+                    <!-- <Title id="Panel1text" text="Scan Barcode"/> -->
+                    <ToolbarSeparator id="separator1"/>
+                    <!-- <ToolbarSpacer id="spacer1"/> -->
+                    <Button id="switchModeButton" text="{= ${ui>/isEditable} ? 'Display' : 'Scan' }" press=".toggleMode"/>
+                </Toolbar>
+            </headerToolbar>
+            <content>
+                <!-- <f:Form id="Form1" editable="{ui>/isEditable}"> -->
+                <f:Form id="Form1" editable="true" class="sapUiResponsiveContentPadding">
+                    <f:layout>
+                        <f:ResponsiveGridLayout id="Layout1" labelSpanXL="3" labelSpanL="3" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="2" singleContainerFullSize="false"/>
+                    </f:layout>
+                    <f:formContainers>
+                        <f:FormContainer id="FormContainer1">
+                            <f:formElements>
+                                <f:FormElement id="Barcode" label="Barcode">
+                                    <f:fields>
+                                        <HBox id="vbox1" gap="0.5rem" class="">
+                                            <Input id="inputBarcode" value="{barcodeForm>/barcodeId}" placeholder="Scan or type barcode..." submit="onBarcodeEnter" width="100%"/>
+                                            <ndc:BarcodeScannerButton id="ScanBtn" provideFallback="true" scanSuccess="onBarcodeScanSuccess" scanFail="onBarcodeScanFail"/>
+                                        </HBox>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement id="DestHandlingUnit" label="Dest. Handling Unit">
+                                    <f:fields>
+                                        <Input id="inputDestHandlingUnit" value="{barcodeForm>/handlingUnit}" placeholder=" " enabled="{= !${ui>/inProcess} }"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement id="NewHU" label="Is New HU">
+                                    <f:fields>
+                                        <CheckBox id="checkNewHU" selected="{barcodeForm>/newHU}"/>
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                        <f:FormContainer id="FormContainer2">
+                            <f:formElements>
+                                <f:FormElement id="Warehouse" label="Warehouse">
+                                    <f:fields>
+                                        <Input id="inputWarehouse" value="{barcodeForm>/warehouse}" placeholder="1PK1" enabled="{= !${ui>/inProcess} }"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement id="DeliveryNumber" label="Delivery Number">
+                                    <f:fields>
+                                        <Input id="inputDeliveryNumber" value="{barcodeForm>/delivery}" placeholder=" " enabled="{= !${ui>/inProcess} }"/>
+                                    </f:fields>
+                                </f:FormElement>
+                                <f:FormElement id="DeliveryItem" label="Delivery Item">
+                                    <f:fields>
+                                        <Input id="inputDeliveryItem" value="{barcodeForm>/deliveryItem}" placeholder=" "/>
+                                    </f:fields>
+                                </f:FormElement>
+                            </f:formElements>
+                        </f:FormContainer>
+                    </f:formContainers>
+                </f:Form>
+            </content>
+        </Panel>
         <macros:items>
-            <!-- Main content -->
-            <IconTabBar id="iconTabBaritems" class="sapUiResponsiveContentPadding">
-                <items>
-                    <IconTabFilter id="iconTabFilteritems" text="Tab 1">
-                    </IconTabFilter>
-                </items>
-            </IconTabBar>
+            <Panel id="panel02">
+                <macros:FilterBar id="FilterBar" metaPath="/ZLUT_WM_C_PICKING_N/@com.sap.vocabularies.UI.v1.SelectionFields#filterBarMacro"/>
+                <macros:Table id="Table1" metaPath="/ZLUT_WM_C_PICKING_N/@com.sap.vocabularies.UI.v1.LineItem#tableMacro" filterBar="FilterBar" header="Picking List" type="ResponsiveTable" initialLoad="false" readOnly="true" selectionMode="Multi" popinLayout="GridSmall"/>
+            </Panel>
         </macros:items>
         <macros:footer>
             <!-- Footer aggregation -->
             <OverflowToolbar id="footer_overflowToolbar">
                 <ToolbarSpacer id="footer_toolbarSpacer"/>
-                <Button id="footer_button" text="Approve" press=".onFooterApprove" type="Accept" icon=""/>
-                <Button id="footer_button1" text="Reject" press=".onFooterReject" type="Reject" icon=""/>
+                <Button id="footer_button" text="Post" press=".onGenWHTask" type="Accept" icon=""/>
+                <!-- <Button id="footer_button1" text="Cancel" press=".onDiscard" type="Reject" icon=""/> -->
             </OverflowToolbar>
         </macros:footer>
     </macros:Page>
