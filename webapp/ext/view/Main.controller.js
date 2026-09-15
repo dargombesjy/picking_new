@@ -14,6 +14,8 @@ sap.ui.define(
              */
             onInit: function () {
                 PageController.prototype.onInit.apply(this, arguments); // needs to be called to properly initialize the page controller
+                var oUiModel = this.getModel('ui');
+                oUiModel.setProperty('/scanActive', false);
             },
 
             /**
@@ -57,10 +59,12 @@ sap.ui.define(
             toggleMode: function () {
                 var oUiModel = this.getModel('ui');
                 var bIsEditable = oUiModel.getProperty('/isEditable');
+                var bScanActive = oUiModel.getProperty('/scanActive');
                 var oFilterBar = this.getView().byId("FilterBar");
 
-                oUiModel.setProperty('/isEditable', !bIsEditable);
-                if (!bIsEditable) {
+                oUiModel.setProperty('/scanActive', !bScanActive);
+                oUiModel.setProperty('/isEditable', !bScanActive);
+                if (!bScanActive) {
                     oFilterBar.setFilterValues("Status", "EQ", "N")
                         .then(function () {
                             return oFilterBar.triggerSearch();
@@ -68,14 +72,34 @@ sap.ui.define(
                 }
             },
 
+            onEdit: function () {
+                var oUiModel = this.getModel('ui');
+                var bIsEditable = oUiModel.getProperty('/isEditable');
+                oUiModel.setProperty('/isEditable', !bIsEditable);
+            },
+
             onBarcodeEnter: function () {
                 const sBarcode = this.getView().getModel("barcodeForm").getProperty("/barcodeId");
-                if (sBarcode) {
-                    if (!this._validateEntryForm()) {
-                        return;
-                    }
-                    this.onAddRow();
+                if (!sBarcode) {
+                    return;
                 }
+
+                if (!this._validateEntryForm()) {
+                    return;
+                }
+
+                // this.editFlow.invokeAction("com.sap.gateway.srvd.zlut_wm_picking_n.v0001.validate_row", {
+                //     contexts: aContexts,
+                //     // model: this.getView().getModel(),
+                //     // parameterValues: {
+                //     //     "Barcode": sBarcode
+                //     // },
+                //     skipParameterDialog: true
+                // }).then(function (oResult) {
+                this.onAddRow();
+                // }).catch(function (oError) {
+                //     MessageBox.error("An error occurred while validating the barcode: " + oError.message);
+                // });
             },
 
             onBarcodeScanSuccess: function (oEvent) {
@@ -110,9 +134,15 @@ sap.ui.define(
                     var oUiModel = this.getModel('ui');
                     oUiModel.setProperty('/inProcess', true);
 
+                    MessageToast.show("Row added successfully");
+
                     // this._focusNewRow(oTable, oNewContext);
-                }.bind(this)).catch(function (oError) {
-                    console.error("Error creating document", oError);
+                    // }.bind(this)).catch(function (oError) {
+                }).catch(function (oError) {
+                    if (!oNewContext.isDeleted()) {
+                        oNewContext.delete();
+                    }
+                    // console.error("Error creating document", oError);
                 });
 
                 // var bNewHU = oEntryData.newHU === true ? "X" : "";

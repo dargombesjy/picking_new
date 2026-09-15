@@ -106,6 +106,9 @@
             <Action Name="generate_hu" IsBound="true">
                 <Parameter Name="_it" Type="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType" Nullable="false"/>
             </Action>
+            <Action Name="validate_row" IsBound="true">
+                <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType)" Nullable="false"/>
+            </Action>
             <EntityContainer Name="Container">
                 <EntitySet Name="ZLUT_WM_C_PICKING_N" EntityType="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType"/>
             </EntityContainer>

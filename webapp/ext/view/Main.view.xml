@@ -1,12 +1,13 @@
 <mvc:View xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:macros="sap.fe.macros" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ndc="sap.ndc" controllerName="zwmpickingn.ext.view.Main" xmlns:macrosTable="sap.fe.macros.table" xmlns:f="sap.ui.layout.form">
     <macros:Page id="Page" title="WM Picking" showFooter="true">
-        <Panel id="Panel1" expandable="true" expanded="{ui>/isEditable}" class="custTinyMarginBottom">
+        <Panel id="Panel1" expandable="true" expanded="{ui>/scanActive}" class="custTinyMarginBottom">
             <headerToolbar>
                 <Toolbar id="Panel1Toolbar">
                     <!-- <Title id="Panel1text" text="Scan Barcode"/> -->
                     <ToolbarSeparator id="separator1"/>
                     <!-- <ToolbarSpacer id="spacer1"/> -->
-                    <Button id="switchModeButton" text="{= ${ui>/isEditable} ? 'Display' : 'Scan' }" press=".toggleMode"/>
+                    <Button id="switchModeButton" text="{= ${ui>/bScanActive} ? 'Display' : 'Scan' }" press=".toggleMode"/>
+                    <Button id="editButton" text="{= ${ui>/isEditable} ? 'Display' : 'Edit' }" press=".onEdit"/>
                 </Toolbar>
             </headerToolbar>
             <content>
