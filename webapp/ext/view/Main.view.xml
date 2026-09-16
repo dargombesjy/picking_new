@@ -8,6 +8,7 @@
                     <!-- <ToolbarSpacer id="spacer1"/> -->
                     <Button id="switchModeButton" text="{= ${ui>/bScanActive} ? 'Display' : 'Scan' }" press=".toggleMode"/>
                     <Button id="editButton" text="{= ${ui>/isEditable} ? 'Display' : 'Edit' }" press=".onEdit"/>
+                    <Button id="clearButton" text="Clear" press=".onClear"/>
                 </Toolbar>
             </headerToolbar>
             <content>

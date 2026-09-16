@@ -2,8 +2,9 @@ sap.ui.define(
     [
         'sap/fe/core/PageController',
         'sap/m/MessageBox',
+        'sap/m/MessageToast'
     ],
-    function (PageController, MessageBox) {
+    function (PageController, MessageBox, MessageToast) {
         'use strict';
 
         return PageController.extend('zwmpickingn.ext.view.Main', {
@@ -58,7 +59,7 @@ sap.ui.define(
 
             toggleMode: function () {
                 var oUiModel = this.getModel('ui');
-                var bIsEditable = oUiModel.getProperty('/isEditable');
+                // var bIsEditable = oUiModel.getProperty('/isEditable');
                 var bScanActive = oUiModel.getProperty('/scanActive');
                 var oFilterBar = this.getView().byId("FilterBar");
 
@@ -77,16 +78,65 @@ sap.ui.define(
                 var bIsEditable = oUiModel.getProperty('/isEditable');
                 oUiModel.setProperty('/isEditable', !bIsEditable);
             },
+            onClear: function () {
+                // var oUiModel = this.getModel('ui');
+                // oUiModel.setProperty('/scanActive', false);
+                // oUiModel.setProperty('/isEditable', false);
+                this._resetEntryForm("full");
+            },
 
-            onBarcodeEnter: function () {
+            onBarcodeEnter: async function () {
                 const sBarcode = this.getView().getModel("barcodeForm").getProperty("/barcodeId");
                 if (!sBarcode) {
                     return;
                 }
-
                 if (!this._validateEntryForm()) {
                     return;
                 }
+
+                const oView = this.getView();
+                const oModel = oView.getModel("pickingRef");
+                oView.setBusy(true);
+
+                const oListBinding = oModel.bindList("/ZLUT_WM_C_PICKING", undefined, undefined, [
+                    new sap.ui.model.Filter("Barcode", sap.ui.model.FilterOperator.EQ, sBarcode)
+                ]);
+
+                const that = this;
+                oListBinding.requestContexts(0, 1).then(function (aContexts) {
+
+                    if (aContexts.length === 0) {
+                        MessageBox.error("No stock data found for Barcode: " + sBarcode);
+                        oView.setBusy(false);
+                        return;
+                    }
+                    oView.setBusy(false);
+                    that.onAddRow();
+
+                }).catch(function (oError) {
+                    oView.setBusy(false);
+                    MessageBox.error("Search failed: " + oError.message);
+                });
+
+                // const oEntryData = this.getView().getModel("barcodeForm").getData();
+                // const oModel = this.getView().getModel();
+                // const oListBinding = oModel.bindList("/ZLUT_WM_C_PICKING_N");
+                // const oNewData = {
+                //     Barcode: oEntryData.barcodeId,
+                //     Warehouse: oEntryData.warehouse,
+                //     HuNum: oEntryData.handlingUnit,
+                //     Delivery: oEntryData.delivery,
+                //     DelvItem: oEntryData.deliveryItem,
+                //     NewHu: oEntryData.newHU === true ? "X" : ""
+                // };
+                // const oContext = oListBinding.create(oNewData);
+                // // const oContext = this.getView().getBindingContext();
+                // const oAction = oModel.bindContext("validate_row(...)", oContext);
+                // try {
+                //     await oAction.execute();
+                // } catch (oError) {
+                //     MessageToast.show("error");
+                // }
 
                 // this.editFlow.invokeAction("com.sap.gateway.srvd.zlut_wm_picking_n.v0001.validate_row", {
                 //     contexts: aContexts,
@@ -96,7 +146,7 @@ sap.ui.define(
                 //     // },
                 //     skipParameterDialog: true
                 // }).then(function (oResult) {
-                this.onAddRow();
+                // this.onAddRow();
                 // }).catch(function (oError) {
                 //     MessageBox.error("An error occurred while validating the barcode: " + oError.message);
                 // });
@@ -106,7 +156,7 @@ sap.ui.define(
                 const sBarcode = oEvent.getParameter("text");
                 if (sBarcode) {
                     this.getView().getModel("barcodeForm").setProperty("/barcodeId", sBarcode);
-                    this.onAddRow();
+                    this.onBarcodeEnter();
                 }
             },
 
@@ -117,7 +167,7 @@ sap.ui.define(
 
                 const oTable = oView.byId("Table1");
                 const oListBinding = oTable.getRowBinding();
-                // const iCountBefore = oListBinding.getContexts().length;
+                const iCountBefore = oListBinding.getContexts().length;
                 const oNewData = {
                     Barcode: oEntryData.barcodeId,
                     Warehouse: oEntryData.warehouse,
@@ -128,21 +178,26 @@ sap.ui.define(
                 };
 
                 const oNewContext = oListBinding.create(oNewData);
-
+                const that = this;
                 oNewContext.created().then(function () {
-                    this._resetEntryForm("partial");
-                    var oUiModel = this.getModel('ui');
+                    that._resetEntryForm("partial");
+                    var oUiModel = that.getModel('ui');
                     oUiModel.setProperty('/inProcess', true);
 
                     MessageToast.show("Row added successfully");
+                    var aContexts = oListBinding.getContexts();
+                    const oContextToFocus = oNewContext || this._findNewlyAddedContext(oListBinding, iCountBefore);
+                    var oCreatedContext = aContexts.at(oContextToFocus);
+                    var oCreatedObject = oCreatedContext.getObject();
+                    oEntryModel.setProperty("handlingUnit", "123");
 
                     // this._focusNewRow(oTable, oNewContext);
                     // }.bind(this)).catch(function (oError) {
                 }).catch(function (oError) {
-                    if (!oNewContext.isDeleted()) {
-                        oNewContext.delete();
-                    }
-                    // console.error("Error creating document", oError);
+                    // if (!oNewContext.isDeleted()) {
+                    //     oNewContext.delete();
+                    // }
+                    console.error("Error creating document", oError);
                 });
 
                 // var bNewHU = oEntryData.newHU === true ? "X" : "";
@@ -175,9 +230,9 @@ sap.ui.define(
 
                 this.editFlow.invokeAction("com.sap.gateway.srvd.zlut_wm_picking_n.v0001.generate_hu", {
                     contexts: aContexts,
-                    parameterValues: {
-                        "Action": "GenWHTask"
-                    },
+                    // parameterValues: {
+                    //     "Action": "GenWHTask"
+                    // },
                     skipParameterDialog: true
                 });
 

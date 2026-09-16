@@ -33,6 +33,13 @@
           "localUri": "localService/mainService/metadata.xml",
           "odataVersion": "4.0"
         }
+      },
+      "pickingRef": {
+        "uri": "/sap/opu/odata4/sap/zlut_wm_sb_picking/srvd/sap/zlut_wm_sd_picking/0001/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
       }
     },
     "crossNavigation": {
@@ -95,6 +102,12 @@
           "operationMode": "Server",
           "autoExpandSelect": true,
           "earlyRequests": true
+        }
+      },
+      "pickingRef": {
+        "dataSource": "pickingRef",
+        "settings": {
+          "operationMode": "Server"
         }
       },
       "@i18n": {

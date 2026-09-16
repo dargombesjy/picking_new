@@ -16,6 +16,7 @@
                         <PropertyPath>Status</PropertyPath>
                         <PropertyPath>Delivery</PropertyPath>
                         <PropertyPath>DelvItem</PropertyPath>
+                        <PropertyPath>HuNum</PropertyPath>
                     </Collection>
                 </Annotation>
                 <Annotation Term="UI.LineItem" Qualifier="tableMacro">
@@ -67,6 +68,9 @@
             </Annotations>
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/DelvItem">
                 <Annotation Term="Common.Label" String="Delivery Item"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/HuNum">
+                <Annotation Term="Common.Label" String="Handling Unit"/>
             </Annotations>
         </Schema>
     </edmx:DataServices>

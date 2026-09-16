@@ -108,6 +108,7 @@
             </Action>
             <Action Name="validate_row" IsBound="true">
                 <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType)" Nullable="false"/>
+                <Parameter Name="Barcode" Type="Edm.String" Nullable="false" MaxLength="70"/>
             </Action>
             <EntityContainer Name="Container">
                 <EntitySet Name="ZLUT_WM_C_PICKING_N" EntityType="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType"/>
@@ -356,6 +357,10 @@
                 <Annotation Term="SAP__common.Label" String="Dyn. Method Control"/>
                 <Annotation Term="SAP__common.Heading" String="Dynamic Method Control"/>
                 <Annotation Term="SAP__common.QuickInfo" String="Dynamic Method Property"/>
+            </Annotations>
+            <Annotations Target="SAP__self.validate_row(Collection(SAP__self.ZLUT_WM_C_PICKING_NType))/Barcode">
+                <Annotation Term="SAP__common.Label" String="Characteristic Value"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=ATWRT"/>
             </Annotations>
         </Schema>
     </edmx:DataServices>
