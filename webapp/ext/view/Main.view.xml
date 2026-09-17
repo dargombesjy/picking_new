@@ -30,12 +30,12 @@
                                 </f:FormElement>
                                 <f:FormElement id="DestHandlingUnit" label="Dest. Handling Unit">
                                     <f:fields>
-                                        <Input id="inputDestHandlingUnit" value="{barcodeForm>/handlingUnit}" placeholder=" " enabled="{= !${ui>/inProcess} }"/>
+                                        <Input id="inputDestHandlingUnit" value="{barcodeForm>/handlingUnit}" placeholder=" " enabled="{= !${ui>/inProcess} &amp;&amp; !${ui>/huDisabled} }"/>
                                     </f:fields>
                                 </f:FormElement>
                                 <f:FormElement id="NewHU" label="Is New HU">
                                     <f:fields>
-                                        <CheckBox id="checkNewHU" selected="{barcodeForm>/newHU}"/>
+                                        <CheckBox id="checkNewHU" selected="{barcodeForm>/newHU}" enabled="{= !${ui>/inProcess} }" select="onNewHU"/>
                                     </f:fields>
                                 </f:FormElement>
                             </f:formElements>

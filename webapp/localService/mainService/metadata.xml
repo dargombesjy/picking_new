@@ -68,6 +68,7 @@
                 <Property Name="HuNum" Type="Edm.String" Nullable="false" MaxLength="20"/>
                 <Property Name="NewHu" Type="Edm.String" Nullable="false" MaxLength="1"/>
                 <Property Name="Material" Type="Edm.String" Nullable="false" MaxLength="18"/>
+                <Property Name="Batch" Type="Edm.String" Nullable="false" MaxLength="10"/>
                 <Property Name="Barcode" Type="Edm.String" Nullable="false" MaxLength="70"/>
                 <Property Name="ParentHandlingUnitUUID" Type="Edm.Guid"/>
                 <Property Name="StockItemUUID" Type="Edm.Guid"/>
@@ -103,8 +104,9 @@
                 <Property Name="numericSeverity" Type="Edm.Byte" Nullable="false"/>
                 <Property Name="longtextUrl" Type="Edm.String"/>
             </ComplexType>
-            <Action Name="generate_hu" IsBound="true">
+            <Action Name="generate_hu" EntitySetPath="_it" IsBound="true">
                 <Parameter Name="_it" Type="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType" Nullable="false"/>
+                <ReturnType Type="com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType" Nullable="false"/>
             </Action>
             <Action Name="validate_row" IsBound="true">
                 <Parameter Name="_it" Type="Collection(com.sap.gateway.srvd.zlut_wm_picking_n.v0001.ZLUT_WM_C_PICKING_NType)" Nullable="false"/>
@@ -139,6 +141,12 @@
                 <Annotation Term="SAP__common.Label" String="Material"/>
                 <Annotation Term="SAP__common.QuickInfo" String="Material Number"/>
                 <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=MATNR"/>
+            </Annotations>
+            <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/Batch">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Batch"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Batch Number"/>
+                <Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=CHARG_D"/>
             </Annotations>
             <Annotations Target="SAP__self.ZLUT_WM_C_PICKING_NType/EWMStockQuantityBaseUnit">
                 <Annotation Term="SAP__common.IsUnit"/>

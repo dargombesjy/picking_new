@@ -15,8 +15,9 @@ sap.ui.define(
              */
             onInit: function () {
                 PageController.prototype.onInit.apply(this, arguments); // needs to be called to properly initialize the page controller
-                var oUiModel = this.getModel('ui');
-                oUiModel.setProperty('/scanActive', false);
+                var oUiModel = this.getModel("ui");
+                oUiModel.setProperty("/scanActive", false);
+                oUiModel.setProperty("/huDisabled", false);
             },
 
             /**
@@ -78,11 +79,17 @@ sap.ui.define(
                 var bIsEditable = oUiModel.getProperty('/isEditable');
                 oUiModel.setProperty('/isEditable', !bIsEditable);
             },
+
             onClear: function () {
-                // var oUiModel = this.getModel('ui');
-                // oUiModel.setProperty('/scanActive', false);
-                // oUiModel.setProperty('/isEditable', false);
                 this._resetEntryForm("full");
+                var oUiModel = this.getModel('ui');
+                oUiModel.setProperty('/inProcess', false);
+            },
+
+            onNewHU: function (oEvent) {
+                var bSelected = oEvent.getParameter("selected");
+                var oUiModel = this.getModel('ui');
+                oUiModel.setProperty("/huDisabled", bSelected);
             },
 
             onBarcodeEnter: async function () {
@@ -185,14 +192,12 @@ sap.ui.define(
                     oUiModel.setProperty('/inProcess', true);
 
                     MessageToast.show("Row added successfully");
-                    var aContexts = oListBinding.getContexts();
-                    const oContextToFocus = oNewContext || this._findNewlyAddedContext(oListBinding, iCountBefore);
-                    var oCreatedContext = aContexts.at(oContextToFocus);
-                    var oCreatedObject = oCreatedContext.getObject();
-                    oEntryModel.setProperty("handlingUnit", "123");
-
-                    // this._focusNewRow(oTable, oNewContext);
-                    // }.bind(this)).catch(function (oError) {
+                    if (oNewData.HuNum == '') {
+                        const oCreatedContext = oNewContext || this._findNewlyAddedContext(oListBinding, iCountBefore);
+                        // var oCreatedContext = aContexts.at(oContextToFocus);
+                        var oCreatedObject = oCreatedContext.getObject();
+                        oEntryModel.setProperty("/handlingUnit", oCreatedObject.HuNum);
+                    }
                 }).catch(function (oError) {
                     // if (!oNewContext.isDeleted()) {
                     //     oNewContext.delete();
@@ -236,9 +241,10 @@ sap.ui.define(
                     skipParameterDialog: true
                 });
 
-                this._resetEntryForm("partial");
-                var oUiModel = this.getModel('ui');
-                oUiModel.setProperty('/inProcess', true);
+                this.onClear();
+                // this._resetEntryForm("partial");
+                // var oUiModel = this.getModel('ui');
+                // oUiModel.setProperty('/inProcess', true);
             },
 
             _validateEntryForm: function () {

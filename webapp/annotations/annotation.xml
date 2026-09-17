@@ -27,6 +27,10 @@
                             <Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
                         </Record>
                         <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="Warehouse"/>
+                            <PropertyValue Property="Label" String="Warehouse"/>
+                        </Record>
+                        <Record Type="UI.DataField">
                             <PropertyValue Property="Value" Path="Delivery"/>
                             <PropertyValue Property="Label" String="Delivery"/>
                         </Record>
@@ -39,16 +43,24 @@
                             <PropertyValue Property="Label" String="Handling Unit"/>
                         </Record>
                         <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="Warehouse"/>
-                            <PropertyValue Property="Label" String="Warehouse"/>
+                            <PropertyValue Property="Value" Path="WhTask"/>
+                            <PropertyValue Property="Label" String="WH Task"/>
                         </Record>
                         <Record Type="UI.DataField">
                             <PropertyValue Property="Value" Path="Material" />
                             <PropertyValue Property="Label" String="Material"/>
                         </Record >
                         <Record Type="UI.DataField">
-                            <PropertyValue Property="Value" Path="NewHu"/>
-                            <PropertyValue Property="Label" String="New HU"/>
+                            <PropertyValue Property="Value" Path="Batch"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="EWMStockQuantityInBaseUnit"/>
+                            <PropertyValue Property="Label" String="Quantity"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="EWMStockQuantityBaseUnit"/>
+                            <PropertyValue Property="Label" String="Unit"/>
+                            <Annotation Term="UI.Hidden"/>
                         </Record>
                         <Record Type="UI.DataField">
                             <PropertyValue Property="Value" Path="Status"/>
