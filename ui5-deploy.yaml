@@ -21,7 +21,7 @@ builder:
           name: ZWM_PICKING_N
           description: WM Picking new
           package: ZLUTDEV
-          transport: C9YK901462
+          transport: C9YK901627  #C9YK901462
         exclude:
           - /test/
           - /localService/

@@ -18,6 +18,7 @@ sap.ui.define(
                 var oUiModel = this.getModel("ui");
                 oUiModel.setProperty("/scanActive", false);
                 oUiModel.setProperty("/huDisabled", false);
+                oUiModel.setProperty("/postEnabled", false);
             },
 
             /**
@@ -72,12 +73,14 @@ sap.ui.define(
                             return oFilterBar.triggerSearch();
                         });
                 }
+                oUiModel.setProperty("/postEnabled", true);
             },
 
             onEdit: function () {
                 var oUiModel = this.getModel('ui');
                 var bIsEditable = oUiModel.getProperty('/isEditable');
                 oUiModel.setProperty('/isEditable', !bIsEditable);
+                oUiModel.setProperty("/postEnabled", true);
             },
 
             onClear: function () {
@@ -232,7 +235,7 @@ sap.ui.define(
                     MessageToast.show("Select a row first");
                     return;
                 }
-
+                
                 this.editFlow.invokeAction("com.sap.gateway.srvd.zlut_wm_picking_n.v0001.generate_hu", {
                     contexts: aContexts,
                     // parameterValues: {
@@ -240,6 +243,20 @@ sap.ui.define(
                     // },
                     skipParameterDialog: true
                 });
+
+                MessageBox.information("Data sent for posting. Please continue"), {
+                    title: "Post begin"
+                }
+
+                var oFilterBar = this.getView().byId("FilterBar");
+                oFilterBar.setFilterValues("Status", "NE", "N")
+                    .then(function () {
+                        return oFilterBar.triggerSearch();
+                    });
+
+                var oUiModel = this.getModel("ui");
+                oUiModel.setProperty('/isEditable', false);
+                oUiModel.setProperty("/postEnabled", false);
 
                 this.onClear();
                 // this._resetEntryForm("partial");

@@ -73,7 +73,7 @@
             <!-- Footer aggregation -->
             <OverflowToolbar id="footer_overflowToolbar">
                 <ToolbarSpacer id="footer_toolbarSpacer"/>
-                <Button id="footer_button" text="Post" press=".onGenWHTask" type="Accept" icon=""/>
+                <Button id="footer_button" text="Post" press=".onGenWHTask" type="Accept" icon="" enabled="{ui>/postEnabled}"/>
                 <!-- <Button id="footer_button1" text="Cancel" press=".onDiscard" type="Reject" icon=""/> -->
             </OverflowToolbar>
         </macros:footer>
